@@ -12,17 +12,25 @@ CHATGPT_CYAN_LABEL="\033[36mchatgpt \033[0m"
 PROCESSING_LABEL="\n\033[90mProcessing... \033[0m\033[0K\r"
 OVERWRITE_PROCESSING_LINE="             \033[0K\r"
 
-if [[ -z "$OPENAI_KEY" ]]; then
-	echo "You need to set your OPENAI_KEY to use this script"
+if [[ -z "$OPENAI_KEY" && -z "$OPENAI_API_KEY" ]]; then
+	echo "You need to set your OPENAI_KEY or OPENAI_API_KEY to use this script"
 	echo "You can set it temporarily by running this on your terminal: export OPENAI_KEY=YOUR_KEY_HERE"
+	echo "Or: export OPENAI_API_KEY=YOUR_KEY_HERE"
 	exit 1
+elif [[ -z "$OPENAI_KEY" ]]; then
+    OPENAI_KEY=$OPENAI_API_KEY
+fi
+
+# Set COLUMNS to a default value if it's not set or set to an invalid value
+if ! [[ "$COLUMNS" =~ ^[0-9]+$ ]] || [ "$COLUMNS" -le 0 ]; then
+    COLUMNS=80
 fi
 
 usage() {
 	cat <<EOF
-A simple, lightweight shell script to use OpenAI's Language Models and DALL-E from the terminal without installing Python or Node.js. Open Source and written in 100% Shell (Bash) 
+A simple, lightweight shell script to use OpenAI's Language Models and DALL-E from the terminal without installing Python or Node.js. Open Source and written in 100% Shell (Bash)
 
-https://github.com/0xacx/chatGPT-shell-cli/
+https://github.com/dvershinin/chatgpt-cli/
 
 By default the script uses the "gpt-3.5-turbo" model. It will upgrade to "gpt-4" when the API is accessible to anyone.
 
@@ -31,8 +39,8 @@ Commands:
   history - To view your chat history
   models - To get a list of the models available at OpenAI API
   model: - To view all the information on a specific model, start a prompt with model: and the model id as it appears in the list of models. For example: "model:text-babbage:001" will get you all the fields for text-babbage:001 model
-  command: - To get a command with the specified functionality and run it, just type "command:" and explain what you want to achieve. The script will always ask you if you want to execute the command. i.e. 
-  "command: show me all files in this directory that have more than 150 lines of code" 
+  command: - To get a command with the specified functionality and run it, just type "command:" and explain what you want to achieve. The script will always ask you if you want to execute the command. i.e.
+  "command: show me all files in this directory that have more than 150 lines of code"
   *If a command modifies your file system or dowloads external files the script will show a warning before executing.
 
 Options:
@@ -126,7 +134,7 @@ request_to_image() {
 request_to_chat() {
 	local message="$1"
 	escaped_system_prompt=$(escape "$SYSTEM_PROMPT")
-	
+
 	curl https://api.openai.com/v1/chat/completions \
 		-sS \
 		-H 'Content-Type: application/json' \
