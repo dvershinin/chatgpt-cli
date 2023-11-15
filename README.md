@@ -6,7 +6,7 @@
 ✨Join the new <a href="https://discord.gg/fwfYAZWKqu">Discord server</a> and start contributing to this project!✨</p>
 
 
-<h1>chatGPT-shell-cli</h1>
+# chatgpt-cli
 
 A simple, lightweight shell script to use OpenAI's chatGPT and DALL-E from the terminal without installing python or node.js. The script uses the official ChatGPT model `gpt-3.5-turbo` with the OpenAI API endpoint `/chat/completions`. You can also use the new `gpt-4` model, if you have access.  
 The script supports the use of all other OpenAI models with the `completions` endpoint and the `images/generations` endpoint for generating images.
@@ -84,11 +84,12 @@ This script relies on curl for the requests to the api and jq to parse the json 
 
 ### Installation
 
-   To install, run this in your terminal and provide your OpenAI API key when asked.
-   
-   ```sh
-   curl -sS https://raw.githubusercontent.com/0xacx/chatGPT-shell-cli/main/install.sh | sudo -E bash
-   ```
+#### RPM-based systems
+
+```bash
+sudo yum -y install https://extras.getpagespeed.com/release-latest.rpm
+sudo yum -y install chatgpt-cli
+````
    
 #### ArchLinux
 
@@ -97,6 +98,14 @@ This script relies on curl for the requests to the api and jq to parse the json 
   ```
   paru -S chatgpt-shell-cli
   ```
+
+#### Other systems
+
+To install, run this in your terminal and provide your OpenAI API key when asked.
+
+```sh
+curl -sS https://raw.githubusercontent.com/dvershinin/chatgpt-cli/main/install.sh | sudo -E bash
+```
 
 ### Manual Installation
 
