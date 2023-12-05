@@ -129,6 +129,7 @@ curl -sS https://raw.githubusercontent.com/dvershinin/chatgpt-cli/main/install.s
 
 ### Commands
 
+  - `git` To git commit and push your changes using auto generated commit message
   - `image:` To generate images, start a prompt with `image:`
     If you are using iTerm, you can view the image directly in the terminal. Otherwise the script will ask to open the image in your browser.
   - `history` To view your chat history, type `history`

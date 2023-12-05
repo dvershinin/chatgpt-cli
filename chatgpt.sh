@@ -220,6 +220,69 @@ add_assistant_response_to_chat_message() {
 	done
 }
 
+
+
+function git_commit_and_push() {
+    if [[ -n $(git status --porcelain) ]]; then
+        git add --all .
+        # Collecting changes
+        CHANGES=$(git diff HEAD | sed 's/"/\\"/g') # Escaping double quotes
+
+        # Reading the prompt from git config
+        PROJECT_GOAL=$(git config --get commit.goal)
+
+        # Setting a default prompt if none is configured
+        if [ -z "$PROJECT_GOAL" ]; then
+            PROJECT_GOAL="develop new software"
+        fi
+
+
+        PROMPT=$(cat <<EOF
+You are a smart git commit message creator software. Now you are going to create a git commit message for a project which has a goal to $PROJECT_GOAL.
+The commit messages you generate aim to explain why the changes were introduced.
+I will provide you with what has changed in the git repository using git diff results.
+Please analyze these changes for the purpose of why they have been done and create a consise and meaningful commit message.
+Start with a one-sentence summary no longer than 72 characters, followed by two newline characters, then provide a detailed message.
+Ensure the commit message is well-structured and each line does not exceed 72 characters.
+
+git diff results:
+
+$CHANGES
+EOF
+)
+
+        # Use jq to safely turn it into a JSON string
+        JSON_ENCODED_PROMPT=$(jq -Rn --arg var "$PROMPT" '$var')
+
+        # Sending request to OpenAI and getting the message
+        MESSAGE_TEXT=$(curl -s -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $OPENAI_KEY" \
+          -d @- https://api.openai.com/v1/chat/completions <<JSON | jq -r '.choices[0].message.content'
+        {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "system", "content": $JSON_ENCODED_PROMPT}],
+            "max_tokens": 200
+        }
+JSON
+        )
+
+        # Extracting and formatting the summary and body
+        SUMMARY=$(echo "$MESSAGE_TEXT" | head -n1)
+        BODY=$(echo "$MESSAGE_TEXT" | sed '1d' | fold -s -w 72)
+
+        # Constructing the commit message
+        COMMIT_MSG=$(printf "%s\n%s" "$SUMMARY" "$BODY")
+        git commit -m "$COMMIT_MSG"
+    fi
+    # Check if there are commits to push, this way we avoid pushing empty commits
+    # Also simply repo might have had a pending commit, so we push it
+    if [[ -n $(git cherry -v) ]]; then
+        git push
+    fi
+}
+
+
+
 # parse command line arguments
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
@@ -275,6 +338,10 @@ while [[ "$#" -gt 0 ]]; do
 		MULTI_LINE_PROMPT=true
 		shift
 		;;
+  git)
+          GIT=true
+          shift
+          ;;
 	-c | --chat-context)
 		CONTEXT=true
 		shift
@@ -297,6 +364,7 @@ MODEL=${MODEL:-gpt-3.5-turbo}
 SIZE=${SIZE:-512x512}
 CONTEXT=${CONTEXT:-false}
 MULTI_LINE_PROMPT=${MULTI_LINE_PROMPT:-false}
+GIT=${GIT:-false}
 
 # create our temp file for multi-line input
 if [ $MULTI_LINE_PROMPT = true ]; then
@@ -312,6 +380,12 @@ fi
 
 running=true
 # check input source and determine run mode
+
+if [ $GIT = true ]; then
+    git_commit_and_push
+    exit 0
+fi
+
 
 # prompt from argument, run on pipe mode (run once, no chat)
 if [ -n "$prompt" ]; then
