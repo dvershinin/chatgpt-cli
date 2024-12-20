@@ -32,7 +32,7 @@ A simple, lightweight shell script to use OpenAI's Language Models and DALL-E fr
 
 https://github.com/dvershinin/chatgpt-cli/
 
-By default the script uses the "gpt-3.5-turbo" model. It will upgrade to "gpt-4" when the API is accessible to anyone.
+By default the script uses the "gpt-4o-mini" model.
 
 Commands:
   image: - To generate images, start a prompt with image: If you are using iTerm, you can view the image directly in the terminal. Otherwise the script will ask to open the image in your browser.
@@ -259,7 +259,7 @@ EOF
           -H "Authorization: Bearer $OPENAI_KEY" \
           -d @- https://api.openai.com/v1/chat/completions <<JSON | jq -r '.choices[0].message.content'
         {
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-4o-mini",
             "messages": [{"role": "system", "content": $JSON_ENCODED_PROMPT}],
             "max_tokens": 200
         }
@@ -360,7 +360,7 @@ done
 # set defaults
 TEMPERATURE=${TEMPERATURE:-0.7}
 MAX_TOKENS=${MAX_TOKENS:-1024}
-MODEL=${MODEL:-gpt-3.5-turbo}
+MODEL=${MODEL:-gpt-4o-mini}
 SIZE=${SIZE:-512x512}
 CONTEXT=${CONTEXT:-false}
 MULTI_LINE_PROMPT=${MULTI_LINE_PROMPT:-false}

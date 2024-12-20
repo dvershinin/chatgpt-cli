@@ -8,7 +8,7 @@
 
 # chatgpt-cli
 
-A simple, lightweight shell script to use OpenAI's chatGPT and DALL-E from the terminal without installing python or node.js. The script uses the official ChatGPT model `gpt-3.5-turbo` with the OpenAI API endpoint `/chat/completions`. You can also use the new `gpt-4` model, if you have access.  
+A simple, lightweight shell script to use OpenAI's chatGPT and DALL-E from the terminal without installing python or node.js. The script uses the official ChatGPT model `gpt-4o-mini` with the OpenAI API endpoint `/chat/completions`. You can also use the new `gpt-4` model, if you have access.  
 The script supports the use of all other OpenAI models with the `completions` endpoint and the `images/generations` endpoint for generating images.
 </div>
 
@@ -121,7 +121,7 @@ curl -sS https://raw.githubusercontent.com/dvershinin/chatgpt-cli/main/install.s
 ### Start
 
 #### Chat Mode
-  - Run the script by using the `chatgpt` command anywhere. By default the script uses the `gpt-3.5-turbo` model.
+  - Run the script by using the `chatgpt` command anywhere. By default the script uses the `gpt-4o-mini` model.
 #### Pipe Mode
   - You can also use it in pipe mode `echo "What is the command to get all pdf files created yesterday?" | chatgpt`
 #### Script Parameters
@@ -140,7 +140,7 @@ curl -sS https://raw.githubusercontent.com/dvershinin/chatgpt-cli/main/install.s
 
 ### Chat context
 
-  - For models other than `gpt-3.5-turbo` and `gpt-4` where the chat context is not supported by the OpenAI api, you can use the chat context build in this script. You can enable chat context mode for the model to remember your previous chat questions and answers. This way you can ask follow-up questions. In chat context the model gets a prompt to act as ChatGPT and is aware of today's date and that it's trained with data up until 2021. To enable this mode start the script with `-c` or `--chat-context`. i.e. `chatgpt --chat-context` and start to chat. 
+  - For models other than `gpt-4o-mini` and `gpt-4` where the chat context is not supported by the OpenAI api, you can use the chat context build in this script. You can enable chat context mode for the model to remember your previous chat questions and answers. This way you can ask follow-up questions. In chat context the model gets a prompt to act as ChatGPT and is aware of today's date and that it's trained with data up until 2021. To enable this mode start the script with `-c` or `--chat-context`. i.e. `chatgpt --chat-context` and start to chat. 
 
 #### Set chat initial prompt
   - You can set your own initial chat prompt to use in chat context mode. The initial prompt will be sent on every request along with your regular prompt so that the OpenAI model will "stay in character". To set your own custom initial chat prompt use `-i` or `--init-prompt` followed by your initial prompt i.e. `chatgpt -i "You are Rick from Rick and Morty, reply with references to episodes."` 
@@ -150,7 +150,7 @@ curl -sS https://raw.githubusercontent.com/dvershinin/chatgpt-cli/main/install.s
 
 ### Use the official ChatGPT model
 
-  - The default model used when starting the script is `gpt-3.5-turbo`.
+  - The default model used when starting the script is `gpt-4o-mini`.
   
 ### Use GPT4
   - If you have access to the GPT4 model you can use it by setting the model to `gpt-4`, i.e. `chatgpt --model gpt-4`
